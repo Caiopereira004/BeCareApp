@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlowUp — Skincare & GlowFridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF8F6;
+      --surface: #FFFFFF;
+      --primary: #9E4761;
+      --primary-dark: #7A3248;
+      --primary-soft: #F9E6EC;
+      --champagne: #FDE8D7;
+      --sage: #4D7C68;
+      --sage-soft: #EBF3EF;
+      --text-primary: #1E1B1E;
+      --text-secondary: #57535A;
+      --border: #E7E2E0;
+      --success: #2E7D5B;
+      --error: #DC2626;
+      --font-scale: 1;
+    }
+    body.dark {
+      --bg: #121113;
+      --surface: #1C1A1E;
+      --primary-soft: #36222B;
+      --sage-soft: #1D2D27;
+      --text-primary: #F5F3F5;
+      --text-secondary: #B5AEB8;
+      --border: #2E2A32;
+    }
+    body.high-contrast { --border: #1E1B1E; }
+    body.dark.high-contrast { --bg: #000000; --surface: #0D0D0D; --border: #FFFFFF; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #EAE5E1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      font-size: calc(15px * var(--font-scale));
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 412px;
+      height: 844px;
+      background: var(--bg);
+      color: var(--text-primary);
+      border-radius: 40px;
+      border: 8px solid #1E1B1E;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+      position: relative;
+    }
+    .screen { flex: 1; overflow-y: auto; padding: 20px; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    .brand-row { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.25rem; }
+    .brand-row span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.52rem;
+      color: var(--primary);
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 18px; margin-bottom: 14px;
+    }
+    .hero-card {
+      background: linear-gradient(135deg, #7A3248, #9E4761);
+      color: #fff; border-radius: 24px; padding: 20px; margin-bottom: 18px;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+    }
+    .hello-italic {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.45rem;
+      color: var(--champagne);
+      display: block;
+      line-height: 1.1;
+    }
+    .hello-name {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 14px;
+      background: var(--primary); color: #fff; font-weight: 700;
+      font-size: 0.98rem; cursor: pointer; font-family: inherit;
+    }
+    .btn-white {
+      background: #fff; color: var(--primary); padding: 9px 14px;
+      border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 0.82rem;
+    }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); }
+    .input-group input {
+      width: 100%; padding: 13px 14px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-primary); font-family: inherit; font-size: 0.95rem;
+    }
+    .nav-bar { display: flex; border-top: 1px solid var(--border); background: var(--surface); padding: 8px 4px; }
+    .nav-item {
+      flex: 1; border: none; background: transparent; color: var(--text-secondary);
+      font-size: 0.72rem; font-weight: 700; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; cursor: pointer; padding: 6px 0;
+    }
+    .nav-item.active { color: var(--primary); }
+    .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
+    .chip {
+      padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-primary); font-size: 0.8rem;
+      font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .avatar-circle {
+      width: 58px; height: 58px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.18);
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame" id="app"></div>
+
+  <script>
+    const state = {
+      user: null,
+      authMode: 'login',
+      tab: 'home',
+      skinType: null,
+      skinGoal: null,
+      routinePeriod: 'morning',
+      water: 3,
+      temp: 6.0,
+      shopCat: 'all',
+      shopQuery: '',
+      cart: [],
+      dark: false,
+      contrast: false,
+      fontScale: 1.0,
+      avatar: '🌸',
+      avatarUrl: null,
+      completed: {},
+      products: [
+        { name: 'Gel de Limpeza Suave', cat: 'cleanser', brand: 'Drogasil', price: 44.90, skin: 'Pele Oleosa' },
+        { name: 'Espuma Micelar Fisiológica', cat: 'cleanser', brand: 'Época Cosméticos', price: 49.90, skin: 'Pele Mista' },
+        { name: 'Gel Hidratante Ácido Hialurônico', cat: 'moisturizer', brand: 'Creamy', price: 69.90, skin: 'Pele Oleosa' },
+        { name: 'Creme Reparador Ceramidas', cat: 'moisturizer', brand: 'Drogasil', price: 64.50, skin: 'Pele Seca / Sensível' },
+        { name: 'Protetor Solar Toque Seco FPS 60', cat: 'sunscreen', brand: 'Drogasil', price: 65.00, skin: 'Pele Oleosa' },
+        { name: 'Sérum Vitamina C 10% Pura', cat: 'serum', brand: 'Creamy', price: 89.90, skin: 'Pele Mista' }
+      ]
+    };
+
+    function logoSvg(size = 42) {
+      return `
+        <svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none">
+          <defs>
+            <linearGradient id="gBrand" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7A3248"/>
+              <stop offset="55%" stop-color="#9E4761"/>
+              <stop offset="100%" stop-color="#C8748C"/>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="18" fill="url(#gBrand)"/>
+          <path d="M46 23A18 18 0 1 0 38 49" stroke="#FDE8D7" stroke-width="3.4" stroke-linecap="round" stroke-opacity="0.88"/>
+          <path d="M32 18C39.5 28 42 34.5 42 39C42 44.5 37.5 49 32 49C26.5 49 22 44.5 22 39C22 34.5 24.5 28 32 18Z" fill="white" fill-opacity="0.95"/>
+        </svg>`;
+    }
+
+    function getSteps() {
+      if (state.routinePeriod === 'morning') {
+        if (state.skinType === 'Pele Oleosa') {
+          return [
+            { step: '1. Gel de Limpeza Oil-Control', detail: 'Controla o sebo matinal sem ressecar.' },
+            { step: '2. Hidratante em Gel Oil-Free', detail: 'Textura leve com Niacinamida.' },
+            { step: '3. Protetor Solar Toque Seco FPS 60', detail: 'Acabamento matte prolongado.' }
+          ];
+        }
+        if (state.skinType === 'Pele Seca / Sensível') {
+          return [
+            { step: '1. Loção de Limpeza Calmante', detail: 'Higienização gentil sem sulfatos.' },
+            { step: '2. Creme Hidratante Ceramidas', detail: 'Nutrição profunda da barreira.' },
+            { step: '3. Protetor Solar Hidratante FPS 50', detail: 'Proteção UV com conforto térmico.' }
+          ];
+        }
+        return [
+          { step: '1. Limpeza Facial Suave', detail: 'Sabonete neutro para iniciar o dia.' },
+          { step: '2. Hidratação Equilibrada', detail: 'Hidratante leve com Ácido Hialurônico.' },
+          { step: '3. Proteção Solar Diária FPS 50+', detail: 'Aplicar 2 dedos no rosto e pescoço.' }
+        ];
+      } else {
+        if (state.skinType === 'Pele Oleosa') {
+          return [
+            { step: '1. Limpeza Profunda Suave', detail: 'Remove excesso de oleosidade do dia.' },
+            { step: '2. Sérum Niacinamida 10% (GlowFridge)', detail: 'Minimiza poros e uniformiza a textura.' },
+            { step: '3. Gel Noturno Equilibrante', detail: 'Hidratação leve durante o sono.' }
+          ];
+        }
+        if (state.skinType === 'Pele Seca / Sensível') {
+          return [
+            { step: '1. Demaquilante & Limpeza Suave', detail: 'Preserva o manto hidrolipídico.' },
+            { step: '2. Sérum Pantenol + B5 (GlowFridge)', detail: 'Ação calmante refrescante a 6°C.' },
+            { step: '3. Bálsamo Reparador Noturno', detail: 'Recuperação intensa noturna.' }
+          ];
+        }
+        return [
+          { step: '1. Higienização Noturna', detail: 'Remove protetor solar e impurezas.' },
+          { step: '2. Sérum Antioxidante (GlowFridge)', detail: 'Vitamina C ou Niacinamida refrigerada.' },
+          { step: '3. Hidratação Reparadora', detail: 'Creme facial para regeneração noturna.' }
+        ];
+      }
+    }
+
+    function renderAvatar(size = 56) {
+      if (state.avatarUrl) {
+        return `<img src="${state.avatarUrl}" class="avatar-circle" style="width:${size}px;height:${size}px;" onclick="setTab('profile')" />`;
+      }
+      return `<div class="avatar-circle" style="width:${size}px;height:${size}px;" onclick="setTab('profile')">${state.avatar}</div>`;
+    }
+
+    function render() {
+      document.body.classList.toggle('dark', state.dark);
+      document.body.classList.toggle('high-contrast', state.contrast);
+      document.documentElement.style.setProperty('--font-scale', state.fontScale);
+
+      const app = document.getElementById('app');
+      if (!state.user) {
+        app.innerHTML = renderAuth();
+        bindAuth();
+        return;
+      }
+
+      let content = '';
+      if (state.tab === 'home') content = renderHome();
+      if (state.tab === 'fridge') content = renderFridge();
+      if (state.tab === 'lessons') content = renderLessons();
+      if (state.tab === 'shop') content = renderShop();
+      if (state.tab === 'profile') content = renderProfile();
+
+      app.innerHTML = `
+        <div class="topbar">
+          <div class="brand-row">${logoSvg(34)}<div>Glow<span>Up</span></div></div>
+          ${state.cart.length ? `<div class="chip active">Sacola (${state.cart.length})</div>` : ''}
+        </div>
+        <div class="screen">${content}</div>
+        <div class="nav-bar">
+          <button class="nav-item ${state.tab==='home'?'active':''}" onclick="setTab('home')">Início</button>
+          <button class="nav-item ${state.tab==='fridge'?'active':''}" onclick="setTab('fridge')">GlowFridge</button>
+          <button class="nav-item ${state.tab==='lessons'?'active':''}" onclick="setTab('lessons')">Aulas</button>
+          <button class="nav-item ${state.tab==='shop'?'active':''}" onclick="setTab('shop')">Loja</button>
+          <button class="nav-item ${state.tab==='profile'?'active':''}" onclick="setTab('profile')">Perfil</button>
+        </div>
+      `;
+    }
+
+    function renderAuth() {
+      const isLogin = state.authMode === 'login';
+      return `
+        <div class="screen" style="display:flex;flex-direction:column;justify-content:center;">
+          <div style="text-align:center;margin-bottom:22px;">
+            <div style="display:inline-block;margin-bottom:12px;">${logoSvg(70)}</div>
+            <h2 style="font-size:1.55rem;font-weight:800;">${isLogin ? 'Bem-vindo ao GlowUp' : 'Criar Conta'}</h2>
+            <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px;">
+              ${isLogin ? 'Sua rotina de autocuidado e controle inteligente GlowFridge' : 'Cadastre-se para salvar seu diagnóstico e rotinas'}
+            </p>
+          </div>
+          <div class="card">
+            <form id="authForm">
+              ${!isLogin ? `
+                <div class="input-group">
+                  <label>Nome completo</label>
+                  <input type="text" id="nameInput" placeholder="Digite seu nome" required />
+                </div>` : ''}
+              <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" id="emailInput" placeholder="seuemail@exemplo.com" required />
+              </div>
+              <div class="input-group">
+                <label>Senha</label>
+                <input type="password" id="pwdInput" placeholder="Digite sua senha" required />
+              </div>
+              <div id="authErr" style="color:var(--error);font-size:0.82rem;font-weight:700;margin-bottom:10px;"></div>
+              <button type="submit" class="btn">${isLogin ? 'Entrar' : 'Criar Conta'}</button>
+            </form>
+          </div>
+          <button onclick="state.authMode=state.authMode==='login'?'register':'login';render()" style="background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;padding:8px;">
+            ${isLogin ? 'Ainda não tem conta? Criar Conta' : 'Já possui conta? Entrar'}
+          </button>
+        </div>
+      `;
+    }
+
+    function bindAuth() {
+      document.getElementById('authForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('emailInput').value.trim();
+        const pass = document.getElementById('pwdInput').value;
+        const nameEl = document.getElementById('nameInput');
+        if (!email.includes('@')) {
+          document.getElementById('authErr').textContent = 'Digite um e-mail válido contendo @';
+          return;
+        }
+        if (state.authMode === 'register') {
+          const strong = pass.length >= 8 && /[A-Z]/.test(pass) && /[a-z]/.test(pass) && /[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass);
+          if (!strong) {
+            document.getElementById('authErr').textContent = 'A senha exige 8+ caracteres, maiúscula, minúscula, número e símbolo.';
+            return;
+          }
+          state.user = { name: nameEl.value.trim(), email };
+        } else {
+          const displayName = email.split('@')[0];
+          state.user = { name: displayName.charAt(0).toUpperCase() + displayName.slice(1), email };
+        }
+        render();
+      });
+    }
+
+    function setTab(t) { state.tab = t; render(); }
+
+    function renderHome() {
+      const steps = getSteps();
+      return `
+        <div class="hero-card">
+          <div>
+            <span class="hello-italic">Olá,</span>
+            <span class="hello-name">${state.user.name}</span>
+            <p style="font-size:0.82rem;opacity:0.92;">
+              ${state.skinType ? `${state.skinType} • ${state.skinGoal}` : 'Rotina padrão ativa (Questionário opcional)'}
+            </p>
+            <button class="btn-white" onclick="setTab('profile')">
+              ${state.skinType ? 'Editar Perfil de Pele' : 'Personalizar Rotina (Opcional)'}
+            </button>
+          </div>
+          ${renderAvatar(56)}
+        </div>
+
+        <div class="chip-row">
+          <button class="chip ${state.routinePeriod==='morning'?'active':''}" onclick="state.routinePeriod='morning';render()">Rotina Diurna</button>
+          <button class="chip ${state.routinePeriod==='night'?'active':''}" onclick="state.routinePeriod='night';render()">Rotina Noturna</button>
+        </div>
+
+        ${steps.map((s, idx) => {
+          const k = `${state.routinePeriod}_${idx}`;
+          const done = !!state.completed[k];
+          return `
+            <div class="card" onclick="state.completed['${k}']=!state.completed['${k}'];render()" style="cursor:pointer;border-color:${done?'var(--primary)':'var(--border)'}">
+              <div style="font-weight:700;margin-bottom:3px;">${done ? '✓ ' : '○ '}${s.step}</div>
+              <div style="font-size:0.85rem;color:var(--text-secondary);">${s.detail}</div>
+            </div>`;
+        }).join('')}
+
+        <div class="card" style="background:var(--sage-soft);border:none;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:800;color:var(--sage);">Hidratação Diária</div>
+            <div style="font-size:0.84rem;color:var(--sage);">${state.water} de 8 copos (${state.water * 250} ml)</div>
+          </div>
+          <button onclick="state.water++;render()" style="background:var(--sage);color:#fff;border:none;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;">+ 250 ml</button>
+        </div>
+      `;
+    }
+
+    function renderFridge() {
+      const ideal = state.temp >= 4 && state.temp <= 8;
+      return `
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:12px;">GlowFridge IoT</h2>
+        <div class="card" style="background:linear-gradient(135deg,#1E293B,#0F172A);color:#fff;text-align:center;">
+          <div style="font-size:0.75rem;letter-spacing:1.2px;opacity:0.75;font-weight:700;">TEMPERATURA INTERNA</div>
+          <div style="font-size:2.7rem;font-weight:800;margin:8px 0;">${state.temp.toFixed(1)} °C</div>
+          <div style="font-size:0.85rem;color:${ideal?'#6EE7B7':'#FCD34D'};font-weight:600;margin-bottom:12px;">
+            ${ideal ? 'Faixa ideal para antioxidantes (4°C – 8°C)' : 'Fora da faixa ideal recomendada (4°C – 8°C)'}
+          </div>
+          <input type="range" min="2" max="14" step="0.5" value="${state.temp}" style="width:100%;" oninput="state.temp=parseFloat(this.value);render()" />
+        </div>
+      `;
+    }
+
+    function renderLessons() {
+      return `
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:12px;">Área de Aulas</h2>
+        <div class="card">
+          <span style="background:var(--primary-soft);color:var(--primary);padding:4px 8px;border-radius:8px;font-size:0.72rem;font-weight:800;">MÓDULO 01 • 03:45 MIN</span>
+          <h3 style="font-size:1.05rem;margin:8px 0 4px;">Ordem Correta do Skincare Diurno</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);">Da textura mais fluida à mais densa para absorção máxima.</p>
+        </div>
+      `;
+    }
+
+    function renderShop() {
+      const items = state.products.filter(p =>
+        (state.shopCat === 'all' || p.cat === state.shopCat) &&
+        p.name.toLowerCase().includes(state.shopQuery.toLowerCase())
+      );
+      return `
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:12px;">Loja & Curadoria</h2>
+        <div class="input-group">
+          <input type="text" placeholder="Buscar produto..." value="${state.shopQuery}" oninput="state.shopQuery=this.value;render()" />
+        </div>
+        ${items.map(p => `
+          <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            <div>
+              <div style="font-weight:700;">${p.name}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);">Parceiro: ${p.brand} • ${p.skin}</div>
+              <div style="font-weight:800;color:var(--primary);margin-top:4px;">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
+            </div>
+            <button onclick="state.cart.push('${p.name}');render()" style="background:var(--primary);color:#fff;border:none;padding:9px 12px;border-radius:10px;font-weight:700;cursor:pointer;">+ Adicionar</button>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function handlePhotoUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { state.avatarUrl = reader.result; render(); };
+      reader.readAsDataURL(file);
+    }
+
+    function selectSkin(type, goal) {
+      if (state.skinType === type) {
+        state.skinType = null;
+        state.skinGoal = null;
+      } else {
+        state.skinType = type;
+        state.skinGoal = goal;
+      }
+      render();
+    }
+
+    function renderProfile() {
+      const presets = ['🌸', '✨', '💧', '☀️', '🌿'];
+      return `
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:12px;">Meu Perfil</h2>
+        <div class="card" style="text-align:center;">
+          <div style="display:flex;justify-content:center;margin-bottom:10px;">${renderAvatar(72)}</div>
+          <div style="font-weight:800;font-size:1.1rem;">${state.user.name}</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:10px;">${state.user.email}</div>
+          <label class="chip" style="display:inline-block;margin-bottom:10px;">
+            📷 Alterar Foto de Perfil
+            <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)" />
+          </label>
+          <div style="display:flex;justify-content:center;gap:6px;">
+            ${presets.map(p => `<button class="chip ${!state.avatarUrl && state.avatar===p?'active':''}" onclick="state.avatarUrl=null;state.avatar='${p}';render()">${p}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800;margin-bottom:4px;">Questionário de Pele (Opcional)</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">
+            Nenhuma opção vem pré-marcada. Selecione caso deseje personalizar suas rotinas diurna e noturna:
+          </p>
+          ${[
+            ['Pele Oleosa', 'Controle de Oleosidade'],
+            ['Pele Mista', 'Equilíbrio & Luminosidade'],
+            ['Pele Seca / Sensível', 'Hidratação & Barreira']
+          ].map(([t, g]) => `
+            <div onclick="selectSkin('${t}','${g}')" style="padding:10px 12px;border-radius:12px;border:1px solid ${state.skinType===t?'var(--primary)':'var(--border)'};background:${state.skinType===t?'var(--primary-soft)':'transparent'};margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+              <div><strong>${t}</strong><div style="font-size:0.78rem;color:var(--text-secondary);">${g}</div></div>
+              <span>${state.skinType===t ? '●' : '○'}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800;margin-bottom:10px;">Aparência & Acessibilidade</div>
+          <label style="display:flex;justify-content:space-between;margin-bottom:10px;cursor:pointer;">
+            <span>Modo Escuro</span>
+            <input type="checkbox" ${state.dark?'checked':''} onchange="state.dark=this.checked;render()" />
+          </label>
+          <label style="display:flex;justify-content:space-between;margin-bottom:10px;cursor:pointer;">
+            <span>Alto Contraste</span>
+            <input type="checkbox" ${state.contrast?'checked':''} onchange="state.contrast=this.checked;render()" />
+          </label>
+          <div>
+            <span style="font-size:0.85rem;">Tamanho da Fonte (${Math.round(state.fontScale*100)}%)</span>
+            <input type="range" min="0.9" max="1.25" step="0.05" value="${state.fontScale}" style="width:100%;margin-top:6px;" oninput="state.fontScale=parseFloat(this.value);render()" />
+          </div>
+        </div>
+
+        <div style="text-align:center;margin:12px 0;">
+          <button class="chip" onclick="alert('LGPD (Lei nº 13.709/2018): Seus dados são criptografados e usados exclusivamente para personalizar sua experiência no GlowUp.')">
+            🔒 LGPD & Privacidade • Lei 13.709/2018
+          </button>
+        </div>
+        <button class="btn" style="background:var(--error);" onclick="state.user=null;render()">Sair da Conta</button>
+      `;
+    }
+
+    render();
+  </script>
+</body>
+</html>
